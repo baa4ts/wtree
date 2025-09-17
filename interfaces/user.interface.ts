@@ -10,12 +10,12 @@ export interface RegisterData extends LoginData {
 export interface UserInformation {
   message: string;
   usuario: Usuario;
-  token:   string;
+  token: string;
 }
 
 export interface Usuario {
-  id:        number;
-  username:  string;
-  gmail:     string;
+  id: number;
+  username: string;
+  gmail: string;
   createdAt: Date;
 }

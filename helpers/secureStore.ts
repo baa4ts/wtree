@@ -1,33 +1,30 @@
 import * as SecureStore from "expo-secure-store";
+import { Alert } from "react-native";
 
+export class SecureStorageAdapter {
+  static async setItem(key: string, value: string) {
+    try {
+      await SecureStore.setItemAsync(key, value);
+    } catch (error) {
+      Alert.alert("Error", "Failed to save data");
+    }
+  }
 
-export const secureStore = {
+  static async getItem(key: string) {
+    try {
+      return await SecureStore.getItemAsync(key);
+    } catch (error) {
+      Alert.alert("Error", "Failed to get data");
+      return null;
+    }
+  }
 
-    save: async (key: string, value: string): Promise<void> => {
-        try {
-            await SecureStore.setItemAsync(key, value);
-        } catch (error) {
-            console.error(`Error guardando ${key}:`, error);
-        }
-    },
-
-
-    get: async (key: string): Promise<string | null> => {
-        try {
-            const value = await SecureStore.getItemAsync(key);
-            return value;
-        } catch (error) {
-            console.error(`Error obteniendo ${key}:`, error);
-            return null;
-        }
-    },
-
-
-    delete: async (key: string): Promise<void> => {
-        try {
-            await SecureStore.deleteItemAsync(key);
-        } catch (error) {
-            console.error(`Error borrando ${key}:`, error);
-        }
-    },
-};
+  static async deleteItem(key: string) {
+    try {
+      await SecureStore.deleteItemAsync(key);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Failed to delete data");
+    }
+  }
+}

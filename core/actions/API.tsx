@@ -1,18 +1,18 @@
-import { secureStore } from "@/helpers/secureStore";
 import axios from "axios";
 
+import { SecureStorageAdapter } from "@/helpers/secureStore";
 
 export const API = axios.create({
-    baseURL: "https://wtree.vercel.app/api"
-})
+  baseURL: "https://wtree.vercel.app",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-API.interceptors.request.use(
-    async (config) => {
-        const token = await secureStore.get("token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
+API.interceptors.request.use(async (config) => {
+  const token = await SecureStorageAdapter.getItem("token");
+  if (token) {
+    config.headers.set("Authorization", `Bearer ${token}`);
+  }
+  return config;
+});

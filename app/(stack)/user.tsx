@@ -1,140 +1,154 @@
-// FILE: screens/User.tsx
-import { Fonts } from "@/constants/theme";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { useUserStore } from "@/core/store/user.store";
+import { Fonts } from "@/constants/theme";
 
 export default function UserScreen() {
-    const background = useThemeColor({}, "background");
-    const text = useThemeColor({}, "text");
-    const subtext = useThemeColor({}, "subtext");
-    const card = useThemeColor({}, "card");
-    const accent = useThemeColor({}, "accent");
+  const background = useThemeColor({}, "background");
+  const text = useThemeColor({}, "text");
+  const subtext = useThemeColor({}, "subtext");
+  const card = useThemeColor({}, "card");
+  const accent = useThemeColor({}, "accent");
 
-    const router = useRouter();
+  const { resetUser, username, gmail } = useUserStore();
+  const router = useRouter();
 
-
-    return (
-        <View style={[styles.container, { backgroundColor: background }]}>
-            {/* Header con flecha atrás */}
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Ionicons name="arrow-back" size={28} color={text} />
-                </TouchableOpacity>
-                <Text
-                    style={[
-                        styles.headerTitle,
-                        { color: text, fontFamily: Fonts.sans },
-                    ]}
-                >
-                    Perfil
-                </Text>
-                <View style={{ width: 28 }} />
-            </View>
-
-            {/* Avatar + nombre */}
-            <View style={styles.profileSection}>
-                <Image
-                    source={{ uri: "https://i.pinimg.com/736x/e6/6c/ae/e66cae93b7d9fe0a5f224c9100d12e96.jpg" }}
-                    style={styles.avatar}
-                />
-                <Text
-                    style={[
-                        styles.username,
-                        { color: text, fontFamily: Fonts.rounded },
-                    ]}
-                >
-                    Nombre de Usuario
-                </Text>
-                <Text
-                    style={[
-                        styles.subtitle,
-                        { color: subtext, fontFamily: Fonts.sans },
-                    ]}
-                >
-                    Usuario registrado
-                </Text>
-            </View>
-
-            {/* Botón salir */}
-            <TouchableOpacity onPress={()=> router.push("/")} style={[styles.logoutButton, { backgroundColor: accent }]}>
-                <Text
-                    style={[
-                        styles.logoutText,
-                        { fontFamily: Fonts.sans },
-                    ]}
-                >
-                    Cerrar Session
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=> router.push("/auth/register")} style={[styles.logoutButton, { backgroundColor: accent }]}>
-                <Text
-                    style={[
-                        styles.logoutText,
-                        { fontFamily: Fonts.sans },
-                    ]}
-                >
-                    Register
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=> router.push("/auth/login")} style={[styles.logoutButton, { backgroundColor: accent }]}>
-                <Text
-                    style={[
-                        styles.logoutText,
-                        { fontFamily: Fonts.sans },
-                    ]}
-                >
-                    Login
-                </Text>
-            </TouchableOpacity>
-        </View>
+  const handleLogout = () => {
+    Alert.alert(
+      "Cerrar sesión",
+      "¿Estás seguro de que quieres cerrar sesión?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Cerrar sesión",
+          style: "destructive",
+          onPress: async () => {
+            await resetUser();
+            router.replace("/auth/login");
+          },
+        },
+      ],
     );
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: background }]}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={28} color={text} />
+        </TouchableOpacity>
+        <Text
+          style={[styles.headerTitle, { color: text, fontFamily: Fonts.sans }]}
+        >
+          Perfil
+        </Text>
+        <View style={{ width: 28 }} />
+      </View>
+
+      {/* Perfil Card */}
+      <View style={[styles.profileCard, { backgroundColor: card }]}>
+        <Image
+          source={{
+            uri: "https://i.pinimg.com/736x/e6/6c/ae/e66cae93b7d9fe0a5f224c9100d12e96.jpg",
+          }}
+          style={styles.avatar}
+        />
+        <Text
+          style={[styles.username, { color: text, fontFamily: Fonts.rounded }]}
+        >
+          {username || "Usuario"}
+        </Text>
+        <Text
+          style={[styles.subtitle, { color: subtext, fontFamily: Fonts.sans }]}
+        >
+          {gmail || "correo@ejemplo.com"}
+        </Text>
+      </View>
+
+      {/* Botón Logout */}
+      <TouchableOpacity
+        onLongPress={handleLogout}
+        style={[styles.logoutButton, { backgroundColor: accent }]}
+      >
+        <Text style={[styles.logoutText, { fontFamily: Fonts.sans }]}>
+          Cerrar Sesión
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingTop: 60,
-        paddingHorizontal: 24,
-    },
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: 40,
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: "700",
-    },
-    profileSection: {
-        alignItems: "center",
-        marginBottom: 60,
-    },
-    avatar: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        marginBottom: 16,
-    },
-    username: {
-        fontSize: 22,
-        fontWeight: "700",
-    },
-    subtitle: {
-        fontSize: 14,
-        marginTop: 4,
-    },
-    logoutButton: {
-        paddingVertical: 14,
-        borderRadius: 12,
-        alignItems: "center",
-    },
-    logoutText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "700",
-    },
+  container: {
+    flex: 1,
+    paddingTop: 60,
+    paddingHorizontal: 24,
+    justifyContent: "flex-start",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 40,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  profileCard: {
+    alignItems: "center",
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+    marginBottom: 60,
+  },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+  username: {
+    fontSize: 22,
+    fontWeight: "700",
+  },
+  subtitle: {
+    fontSize: 14,
+    marginTop: 4,
+  },
+  logoutButton: {
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    marginHorizontal: 40,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  logoutText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
 });

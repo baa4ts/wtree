@@ -1,98 +1,95 @@
-import { secureStore } from "@/helpers/secureStore";
-import { LoginData, RegisterData } from "@/interfaces/user.interface";
+// FILE: store/user.store.ts
+
 import { create } from "zustand";
-import { actionInformacion, actionLogin, actionRegister } from "../actions/user.action";
+
+import { SecureStorageAdapter } from "@/helpers/secureStore";
+import { LoginData, RegisterData } from "@/interfaces/user.interface";
+
+import {
+  actionInformacion,
+  actionLogin,
+  actionRegister,
+} from "../actions/user.action";
 
 interface UserStore {
-    username: string | null;
-    gmail: string | null;
-    token: string | null;
-    id: number | null;
+  username?: string;
+  gmail?: string;
+  token?: string;
+  id?: number;
+  status: "authenticated" | "unauthenticated" | "checking";
 
-    resetUser: () => void;
-    loginUser: (data: LoginData) => Promise<boolean>;
-    registerUser: (data: RegisterData) => Promise<boolean>;
-    checkUser: () => Promise<boolean>;
+  resetUser: () => Promise<void>;
+  loginUser: (data: LoginData) => Promise<boolean>;
+  registerUser: (data: RegisterData) => Promise<boolean>;
+  checkUser: () => Promise<void>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
-    username: null,
-    gmail: null,
-    token: null,
-    id: null,
+  username: undefined,
+  gmail: undefined,
+  token: undefined,
+  id: undefined,
+  status: "unauthenticated",
 
-    resetUser: () =>
-        set({
-            id: null,
-            username: null,
-            gmail: null,
-            token: null,
-        }),
+  resetUser: async () => {
+    set({
+      id: undefined,
+      username: undefined,
+      gmail: undefined,
+      token: undefined,
+      status: "unauthenticated",
+    });
+    await SecureStorageAdapter.deleteItem("token");
+  },
 
-    loginUser: async (data: LoginData) => {
-        try {
-            const response = await actionLogin(data);
+  loginUser: async (data: LoginData) => {
+    const response = await actionLogin(data);
 
-            if (!response) {
-                get().resetUser();
-                await secureStore.delete("token");
-                return false;
-            }
+    if (!response) {
+      await get().resetUser();
+      return false;
+    }
 
-            set({ token: response.token });
-            await secureStore.save("token", response.token);
-            return true;
-        } catch (error) {
-            get().resetUser();
-            await secureStore.delete("token");
-            return false;
-        }
-    },
+    await SecureStorageAdapter.setItem("token", response.token);
+    set({ token: response.token, status: "authenticated" });
+    return true;
+  },
 
-    registerUser: async (data: RegisterData) => {
-        try {
-            const response = await actionRegister(data);
+  registerUser: async (data: RegisterData) => {
+    const response = await actionRegister(data);
 
-            if (!response) {
-                get().resetUser();
-                await secureStore.delete("token");
-                return false;
-            }
+    if (!response) {
+      await get().resetUser();
+      return false;
+    }
 
-            set({ token: response.token });
-            await secureStore.save("token", response.token);
-            return true;
-        } catch (error) {
-            get().resetUser();
-            await secureStore.delete("token");
-            return false;
-        }
-    },
+    await SecureStorageAdapter.setItem("token", response.token);
+    set({ token: response.token, status: "authenticated" });
+    return true;
+  },
 
-    checkUser: async () => {
-        try {
-            const key = await secureStore.get("token");
+  checkUser: async () => {
+    set({ status: "checking" });
 
-            if (!key) {
-                get().resetUser();
-                return false;
-            }
+    const token = await SecureStorageAdapter.getItem("token");
+    if (!token) {
+      await get().resetUser();
+      return;
+    }
 
-            const response = await actionInformacion();
+    const response = await actionInformacion();
+    if (!response) {
+      await get().resetUser();
+      return;
+    }
 
-            if (!response) {
-                get().resetUser();
-                await secureStore.delete("token");
-                return false;
-            }
-
-            const { token, usuario } = response;
-            set({ id: usuario.id, gmail: usuario.gmail, username: usuario.username, token: token });
-            return true;
-        } catch (error) {
-            get().resetUser();
-            await secureStore.delete("token");
-            return false;
-        }
-    },
+    const { usuario } = response;
+    set({
+      id: usuario.id,
+      username: usuario.username,
+      gmail: usuario.gmail,
+      token,
+      status: "authenticated",
+    });
+  },
 }));
