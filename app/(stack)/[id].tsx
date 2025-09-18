@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { View, Text, StyleSheet } from "react-native";
 
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -6,9 +6,15 @@ import { Fonts } from "@/constants/theme";
 
 export default function Sensor() {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
+
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
 
+  if (!id) {
+    router.dismissAll();
+    return null;
+  }
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <Text style={[styles.text, { color: textColor }]}>{id}</Text>
