@@ -4,28 +4,37 @@ import { config } from "@/constants/vars";
 
 import {
   actionSensorList,
+  actionSensorNotificaction,
   actionSpecificSensor,
 } from "../actions/sensores.actions";
 
-export function useSensor() {
+interface UseSpecificSensorProps {
+  sensorID: string;
+}
+export function useSensorNotification() {
   return useQuery({
-    queryKey: ["sensor"],
-    queryFn: async () => await actionSensorList(),
+    queryKey: ["notifications"],
+    queryFn: async () => await actionSensorNotificaction(),
     staleTime: config.staleTime,
     refetchInterval: config.refetchInterval,
   });
 }
 
-interface UseSpecificSensorProps {
-  sensorID: string;
-}
-
 export function useSpecificSensor({ sensorID }: UseSpecificSensorProps) {
   return useQuery({
-    queryKey: ["SpecificSensor", sensorID],
+    queryKey: ["spesificSensor", sensorID],
     queryFn: async () => {
       return await actionSpecificSensor({ sensorID });
     },
+    staleTime: config.staleTime,
+    refetchInterval: config.refetchInterval,
+  });
+}
+
+export function useSensorList() {
+  return useQuery({
+    queryKey: ["sensorList"],
+    queryFn: async () => await actionSensorList(),
     staleTime: config.staleTime,
     refetchInterval: config.refetchInterval,
   });

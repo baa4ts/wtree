@@ -1,5 +1,6 @@
 import {
   Resultado,
+  SensorList,
   SensorResponse,
   SpecificSensor,
 } from "@/interfaces/sensor.interfaces";
@@ -15,20 +16,20 @@ interface SpecificSensorProps {
   sensorID: string;
 }
 
-export const actionSensorList = async (): Promise<SensorListResult | null> => {
-  try {
-    const response = await API.get<SensorResponse[]>("/reports");
+export const actionSensorNotificaction =
+  async (): Promise<SensorListResult | null> => {
+    try {
+      const response = await API.get<SensorResponse[]>("/reports");
 
-    if (response.status >= 500) {
-      throw new Error("Error del servidor al obtener los reportes");
+      if (response.status >= 500) {
+        throw new Error("Error del servidor al obtener los reportes");
+      }
+
+      return { datos: response.data, code: response.status };
+    } catch {
+      return null;
     }
-
-    return { datos: response.data, code: response.status };
-  } catch {
-    // console.error("Error en actionSensorList:", error);
-    return null;
-  }
-};
+  };
 
 export const actionSpecificSensor = async ({
   sensorID,
@@ -42,7 +43,20 @@ export const actionSpecificSensor = async ({
 
     return response.data.resultado;
   } catch {
-    // console.error("Error en actionSensorList:", error);
+    return null;
+  }
+};
+
+export const actionSensorList = async (): Promise<SensorList | null> => {
+  try {
+    const response = await API.get<SensorList>("/sensor");
+
+    if (response.status >= 500) {
+      throw new Error("Error del servidor al obtener los reportes");
+    }
+
+    return response.data;
+  } catch {
     return null;
   }
 };

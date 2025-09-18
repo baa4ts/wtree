@@ -13,7 +13,7 @@ export interface SensorCardProps {
   sensorID: string;
 }
 
-export default function SensorCard({
+export default function SensorCardNotification({
   valor,
   fecha,
   sensorName,

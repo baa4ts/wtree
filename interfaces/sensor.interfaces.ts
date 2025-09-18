@@ -26,3 +26,14 @@ export interface Reporte {
   valor: number;
   fecha: Date;
 }
+
+export interface SensorList {
+  message: string;
+  sensores: Sensore[];
+  token: null;
+}
+
+export interface Sensore {
+  sensorUsername: string;
+  sensorID: string;
+}
