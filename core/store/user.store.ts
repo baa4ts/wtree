@@ -1,5 +1,3 @@
-// FILE: store/user.store.ts
-
 import { create } from "zustand";
 
 import { SecureStorageAdapter } from "@/helpers/secureStore";

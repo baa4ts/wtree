@@ -1,4 +1,3 @@
-// FILE: componentes/SensorCard.tsx
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -25,9 +24,7 @@ export default function SensorCard({
   const fire = useThemeColor({}, "fire");
   const sheet = useThemeColor({}, "sheet");
 
-  const getIconName = (
-    v: number,
-  ): "water-outline" | "leaf-outline" | "flame-outline" => {
+  const getIconName = (v: number) => {
     if (v <= 400) return "water-outline";
     if (v <= 649) return "leaf-outline";
     return "flame-outline";
@@ -39,7 +36,7 @@ export default function SensorCard({
     return fire;
   };
 
-  const formatDate = (f: string): string => {
+  const formatDate = (f: string) => {
     const d = new Date(f);
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -59,7 +56,7 @@ export default function SensorCard({
           style={{ marginRight: 16 }}
         />
         <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text style={[styles.title, { color: text }]}>Revisión diaria</Text>
+          <Text style={[styles.title, { color: text }]}>{sensorName}</Text>
           <Text style={[styles.date, { color: subtext }]}>
             {formatDate(fecha)}
           </Text>
@@ -77,7 +74,6 @@ export default function SensorCard({
           { backgroundColor: "#111", borderRadius: 12 },
         ]}
       >
-        <Text style={styles.sensorName}>{sensorName}</Text>
         <Text style={styles.sensorDescription}>{sensorDescription}</Text>
       </View>
     </View>
@@ -109,6 +105,5 @@ const styles = StyleSheet.create({
   },
   valueText: { fontWeight: "700", fontSize: 14 },
   bottomRow: { padding: 12 },
-  sensorName: { fontSize: 16, fontWeight: "700", color: "#fff" },
   sensorDescription: { fontSize: 14, marginTop: 4, color: "#ddd" },
 });

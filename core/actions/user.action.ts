@@ -1,5 +1,3 @@
-// FILE: actions/user.action.ts
-
 import { AuthResponse } from "@/interfaces/auth.response.interface";
 import {
   LoginData,
