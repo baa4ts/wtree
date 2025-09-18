@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
 
 import { useThemeColor } from "@/hooks/use-theme-color";
 
@@ -9,6 +10,7 @@ export interface SensorCardProps {
   fecha: string;
   sensorName: string;
   sensorDescription: string;
+  sensorID: string;
 }
 
 export default function SensorCard({
@@ -16,13 +18,14 @@ export default function SensorCard({
   fecha,
   sensorName,
   sensorDescription,
+  sensorID,
 }: SensorCardProps) {
-  const text = useThemeColor({}, "text");
-  const subtext = useThemeColor({}, "subtext");
-  const card = useThemeColor({}, "card");
-  const accent = useThemeColor({}, "accent");
-  const fire = useThemeColor({}, "fire");
-  const sheet = useThemeColor({}, "sheet");
+  const textColor = useThemeColor({}, "text");
+  const subtextColor = useThemeColor({}, "subtext");
+  const cardColor = useThemeColor({}, "card");
+  const accentColor = useThemeColor({}, "accent");
+  const fireColor = useThemeColor({}, "fire");
+  const sheetColor = useThemeColor({}, "sheet");
 
   const getIconName = (v: number) => {
     if (v <= 400) return "water-outline";
@@ -31,9 +34,9 @@ export default function SensorCard({
   };
 
   const getColor = (v: number) => {
-    if (v <= 400) return sheet;
-    if (v <= 649) return accent;
-    return fire;
+    if (v <= 400) return sheetColor;
+    if (v <= 649) return accentColor;
+    return fireColor;
   };
 
   const formatDate = (f: string) => {
@@ -46,37 +49,47 @@ export default function SensorCard({
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  return (
-    <View style={[styles.card, { backgroundColor: card }]}>
-      <View style={styles.topRow}>
-        <Ionicons
-          name={getIconName(valor)}
-          size={60}
-          color={getColor(valor)}
-          style={{ marginRight: 16 }}
-        />
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text style={[styles.title, { color: text }]}>{sensorName}</Text>
-          <Text style={[styles.date, { color: subtext }]}>
-            {formatDate(fecha)}
-          </Text>
-        </View>
-        <View style={[styles.valueCircle, { borderColor: getColor(valor) }]}>
-          <Text style={[styles.valueText, { color: getColor(valor) }]}>
-            {valor}
-          </Text>
-        </View>
-      </View>
+  const dynamicColor = getColor(valor);
 
-      <View
-        style={[
-          styles.bottomRow,
-          { backgroundColor: "#111", borderRadius: 12 },
-        ]}
-      >
-        <Text style={styles.sensorDescription}>{sensorDescription}</Text>
+  const dynamicStyles = StyleSheet.create({
+    card: { backgroundColor: cardColor },
+    title: { color: textColor },
+    date: { color: subtextColor },
+    valueCircle: { borderColor: dynamicColor },
+    valueText: { color: dynamicColor },
+    bottomRow: { backgroundColor: "#111" },
+  });
+
+  return (
+    <Pressable onPress={() => router.push(`/(stack)/${sensorID}`)}>
+      <View style={[styles.card, dynamicStyles.card]}>
+        <View style={styles.topRow}>
+          <Ionicons
+            name={getIconName(valor)}
+            size={60}
+            color={dynamicColor}
+            style={styles.icon}
+          />
+          <View style={styles.info}>
+            <Text style={[styles.title, dynamicStyles.title]}>
+              {sensorName}
+            </Text>
+            <Text style={[styles.date, dynamicStyles.date]}>
+              {formatDate(fecha)}
+            </Text>
+          </View>
+          <View style={[styles.valueCircle, dynamicStyles.valueCircle]}>
+            <Text style={[styles.valueText, dynamicStyles.valueText]}>
+              {valor}
+            </Text>
+          </View>
+        </View>
+
+        <View style={[styles.bottomRow, dynamicStyles.bottomRow]}>
+          <Text style={styles.sensorDescription}>{sensorDescription}</Text>
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -92,6 +105,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   topRow: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
+  icon: { marginRight: 16 },
+  info: { flex: 1, justifyContent: "center" },
   title: { fontSize: 18, fontWeight: "700" },
   date: { fontSize: 12, marginTop: 4 },
   valueCircle: {
@@ -104,6 +119,6 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   valueText: { fontWeight: "700", fontSize: 14 },
-  bottomRow: { padding: 12 },
+  bottomRow: { padding: 12, borderRadius: 12 },
   sensorDescription: { fontSize: 14, marginTop: 4, color: "#ddd" },
 });

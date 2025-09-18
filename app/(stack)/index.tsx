@@ -1,4 +1,3 @@
-// FILE: screens/NotificationsScreen/index.tsx
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
@@ -21,15 +20,15 @@ import { getDayMoments } from "@/auxiliar/day";
 import { useUserStore } from "@/core/store/user.store";
 
 export default function NotificationsScreen() {
-  const [refreshStatus, setRefreshStatus] = useState<boolean>(false);
-  const background = useThemeColor({}, "background");
+  const [refreshStatus, setRefreshStatus] = useState(false);
+  const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const subtextColor = useThemeColor({}, "subtext");
   const accentColor = useThemeColor({}, "accent");
   const router = useRouter();
 
   const { data, isLoading, error, refetch } = useSensor();
-  const { resetUser } = useUserStore();
+  const { resetUser, username } = useUserStore();
 
   const onRefresh = useCallback(async () => {
     setRefreshStatus(true);
@@ -39,7 +38,7 @@ export default function NotificationsScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor }]}>
         <ActivityIndicator size="large" color={accentColor} />
       </SafeAreaView>
     );
@@ -47,14 +46,9 @@ export default function NotificationsScreen() {
 
   if (error) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: background }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor }]}>
         <View style={styles.errorContainer}>
-          <Text
-            style={[
-              styles.errorText,
-              { color: subtextColor, fontFamily: Fonts.rounded },
-            ]}
-          >
+          <Text style={[styles.errorText, { color: subtextColor }]}>
             Error al obtener los reportes. Por favor, intenta de nuevo.
           </Text>
           <TouchableOpacity
@@ -74,25 +68,15 @@ export default function NotificationsScreen() {
   const hasSensors = data?.datos && data.datos.length > 0;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text
-            style={[
-              styles.greeting,
-              { color: textColor, fontFamily: Fonts.rounded },
-            ]}
-          >
+          <Text style={[styles.greeting, { color: textColor }]}>
             Buenas {getDayMoments()}
           </Text>
-          <Text
-            style={[
-              styles.username,
-              { color: textColor, fontFamily: Fonts.sans },
-            ]}
-          >
-            Carlos Morals
+          <Text style={[styles.username, { color: textColor }]}>
+            {username}
           </Text>
         </View>
 
@@ -132,7 +116,8 @@ export default function NotificationsScreen() {
               valor={sensor.valor}
               fecha={sensor.fecha}
               sensorName={sensor.sensorUsername}
-              sensorDescription={sensor.sensorDescripction} // coincide con API
+              sensorDescription={sensor.sensorDescripction}
+              sensorID={sensor.sensorID}
             />
           ))}
         </ScrollView>
@@ -143,12 +128,7 @@ export default function NotificationsScreen() {
             size={70}
             color={subtextColor}
           />
-          <Text
-            style={[
-              styles.emptyText,
-              { color: subtextColor, fontFamily: Fonts.rounded },
-            ]}
-          >
+          <Text style={[styles.emptyText, { color: subtextColor }]}>
             No tienes sensores registrados o aún no hay notificaciones.
             Recomendamos esperar 10 minutos o revisar cómo conectar el sensor.
           </Text>
@@ -178,8 +158,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  greeting: { fontSize: 18, fontWeight: "500" },
-  username: { fontSize: 24, fontWeight: "700", marginTop: 6 },
+  greeting: { fontSize: 18, fontWeight: "500", fontFamily: Fonts.rounded },
+  username: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginTop: 6,
+    fontFamily: Fonts.sans,
+  },
   iconsRow: { flexDirection: "row", alignItems: "center" },
   icon: { marginLeft: 18 },
 
@@ -190,7 +175,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 24,
   },
-  emptyText: { fontSize: 18, marginTop: 16, textAlign: "center" },
+  emptyText: {
+    fontSize: 18,
+    marginTop: 16,
+    textAlign: "center",
+    fontFamily: Fonts.rounded,
+  },
   addButton: {
     marginTop: 24,
     paddingVertical: 14,
@@ -211,7 +201,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 24,
   },
-  errorText: { fontSize: 18, textAlign: "center", marginBottom: 24 },
+  errorText: {
+    fontSize: 18,
+    textAlign: "center",
+    marginBottom: 24,
+    fontFamily: Fonts.rounded,
+  },
   logoutButton: {
     paddingVertical: 14,
     paddingHorizontal: 28,

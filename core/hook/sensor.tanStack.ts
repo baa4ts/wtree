@@ -1,16 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { SensorResponse } from "@/interfaces/sensor.interfaces";
+import { config } from "@/constants/vars";
+
 import { actionSensorList } from "../actions/sensores.actions";
 
 export function useSensor() {
-  const query = useQuery({
+  return useQuery<{ datos: SensorResponse[]; code: number } | null>({
     queryKey: ["sensor"],
     queryFn: async () => {
-      return await actionSensorList();
+      const result = await actionSensorList();
+      return result;
     },
-    staleTime: 3500,
-    refetchInterval: 3500,
+    staleTime: config.staleTime,
+    refetchInterval: config.refetchInterval,
   });
-
-  return query;
 }

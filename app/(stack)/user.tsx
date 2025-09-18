@@ -16,10 +16,10 @@ import { Fonts } from "@/constants/theme";
 
 export default function UserScreen() {
   const background = useThemeColor({}, "background");
-  const text = useThemeColor({}, "text");
-  const subtext = useThemeColor({}, "subtext");
-  const card = useThemeColor({}, "card");
-  const accent = useThemeColor({}, "accent");
+  const textColor = useThemeColor({}, "text");
+  const subtextColor = useThemeColor({}, "subtext");
+  const cardColor = useThemeColor({}, "card");
+  const accentColor = useThemeColor({}, "accent");
 
   const { resetUser, username, gmail } = useUserStore();
   const router = useRouter();
@@ -47,32 +47,24 @@ export default function UserScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={28} color={text} />
+          <Ionicons name="arrow-back" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text
-          style={[styles.headerTitle, { color: text, fontFamily: Fonts.sans }]}
-        >
-          Perfil
-        </Text>
-        <View style={{ width: 28 }} />
+        <Text style={[styles.headerTitle, { color: textColor }]}>Perfil</Text>
+        <View style={styles.headerSpacer} />
       </View>
 
       {/* Perfil Card */}
-      <View style={[styles.profileCard, { backgroundColor: card }]}>
+      <View style={[styles.profileCard, { backgroundColor: cardColor }]}>
         <Image
           source={{
             uri: "https://i.pinimg.com/736x/e6/6c/ae/e66cae93b7d9fe0a5f224c9100d12e96.jpg",
           }}
           style={styles.avatar}
         />
-        <Text
-          style={[styles.username, { color: text, fontFamily: Fonts.rounded }]}
-        >
+        <Text style={[styles.username, { color: textColor }]}>
           {username || "Usuario"}
         </Text>
-        <Text
-          style={[styles.subtitle, { color: subtext, fontFamily: Fonts.sans }]}
-        >
+        <Text style={[styles.subtitle, { color: subtextColor }]}>
           {gmail || "correo@ejemplo.com"}
         </Text>
       </View>
@@ -80,11 +72,9 @@ export default function UserScreen() {
       {/* Botón Logout */}
       <TouchableOpacity
         onLongPress={handleLogout}
-        style={[styles.logoutButton, { backgroundColor: accent }]}
+        style={[styles.logoutButton, { backgroundColor: accentColor }]}
       >
-        <Text style={[styles.logoutText, { fontFamily: Fonts.sans }]}>
-          Cerrar Sesión
-        </Text>
+        <Text style={styles.logoutText}>Cerrar Sesión</Text>
       </TouchableOpacity>
     </View>
   );
@@ -106,6 +96,10 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "700",
+    fontFamily: Fonts.sans,
+  },
+  headerSpacer: {
+    width: 28,
   },
   profileCard: {
     alignItems: "center",
@@ -130,10 +124,12 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 22,
     fontWeight: "700",
+    fontFamily: Fonts.rounded,
   },
   subtitle: {
     fontSize: 14,
     marginTop: 4,
+    fontFamily: Fonts.sans,
   },
   logoutButton: {
     paddingVertical: 16,
@@ -150,5 +146,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
+    fontFamily: Fonts.sans,
   },
 });

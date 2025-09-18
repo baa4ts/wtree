@@ -11,7 +11,7 @@ export const API = axios.create({
 
 API.interceptors.request.use(async (config) => {
   const token = await SecureStorageAdapter.getItem("token");
-  if (token) {
+  if (token && config.headers) {
     config.headers.set("Authorization", `Bearer ${token}`);
   }
   return config;

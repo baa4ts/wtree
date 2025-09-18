@@ -11,18 +11,14 @@ const reactNativePlugin = require("eslint-plugin-react-native");
 const typescriptEslint = require("@typescript-eslint/eslint-plugin");
 
 module.exports = defineConfig([
-  // 1. Configuración de Expo. Esto ya incluye la mayoría de los plugins.
   expoConfig,
 
-  // 2. Extiende la configuración de Prettier.
   prettierRecommended,
 
-  // 3. Objeto de configuración principal con plugins y reglas.
   {
     ignores: ["dist/*"],
     files: ["**/*.{ts,tsx}"],
 
-    // Define los plugins que no vienen con la configuración base.
     plugins: {
       prettier: prettierPlugin,
       "react-hooks": reactHooksPlugin,
@@ -30,19 +26,15 @@ module.exports = defineConfig([
       "@typescript-eslint": typescriptEslint,
     },
 
-    // Tus reglas personalizadas.
     rules: {
-      // Regla para variables no usadas
-      "no-unused-vars": "off", // Desactiva la regla base
+      "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_" },
       ],
 
-      // Regla para estilos de StyleSheet no usados
       "react-native/no-unused-styles": "error",
 
-      // Resto de tus reglas
       "prettier/prettier": ["error", { endOfLine: "auto" }],
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",

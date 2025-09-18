@@ -5,7 +5,7 @@ export class SecureStorageAdapter {
   static async setItem(key: string, value: string) {
     try {
       await SecureStore.setItemAsync(key, value);
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to save data");
     }
   }
@@ -13,7 +13,7 @@ export class SecureStorageAdapter {
   static async getItem(key: string) {
     try {
       return await SecureStore.getItemAsync(key);
-    } catch (error) {
+    } catch {
       Alert.alert("Error", "Failed to get data");
       return null;
     }
@@ -22,8 +22,7 @@ export class SecureStorageAdapter {
   static async deleteItem(key: string) {
     try {
       await SecureStore.deleteItemAsync(key);
-    } catch (error) {
-      console.log(error);
+    } catch {
       Alert.alert("Error", "Failed to delete data");
     }
   }

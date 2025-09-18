@@ -20,10 +20,10 @@ interface SensorData {
 }
 
 export default function SensorForm() {
-  const background = useThemeColor({}, "background");
-  const text = useThemeColor({}, "text");
-  const subtext = useThemeColor({}, "subtext");
-  const accent = useThemeColor({}, "accent");
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const subtextColor = useThemeColor({}, "subtext");
+  const accentColor = useThemeColor({}, "accent");
 
   const router = useRouter();
 
@@ -38,10 +38,6 @@ export default function SensorForm() {
       Alert.alert("Error", "El ID y el nombre son obligatorios");
       return;
     }
-
-    console.log("Sensor ID:", sensor.sensorID);
-    console.log("Sensor Name:", sensor.sensorUsername);
-    console.log("Sensor Description:", sensor.sensorDescription || "(empty)");
   };
 
   const handleChange = (key: keyof SensorData, value: string) => {
@@ -49,42 +45,39 @@ export default function SensorForm() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: background }]}>
-      <Text style={[styles.title, { color: text, fontFamily: Fonts.sans }]}>
-        Nuevo sensor
-      </Text>
+    <View style={[styles.container, backgroundStyle(backgroundColor)]}>
+      <Text style={[styles.title, textStyle(textColor)]}>Nuevo sensor</Text>
 
       <View style={styles.tipsRow}>
-        <Ionicons name="information-circle-outline" size={18} color={subtext} />
-        <Text
-          style={[
-            styles.tipsText,
-            { color: subtext, fontFamily: Fonts.rounded },
-          ]}
-        >
+        <Ionicons
+          name="information-circle-outline"
+          size={18}
+          color={subtextColor}
+        />
+        <Text style={[styles.tipsText, textStyle(subtextColor)]}>
           Tips: El sensor ID se obtiene en el momento que conectas tu sensor a
           tu red Wifi
         </Text>
       </View>
 
       <TextInput
-        style={[styles.input, { borderColor: accent, color: text }]}
+        style={[styles.input, inputStyle(accentColor, textColor)]}
         placeholder="ID del sensor"
-        placeholderTextColor={subtext}
+        placeholderTextColor={subtextColor}
         value={sensor.sensorID}
         onChangeText={(value) => handleChange("sensorID", value)}
       />
       <TextInput
-        style={[styles.input, { borderColor: accent, color: text }]}
+        style={[styles.input, inputStyle(accentColor, textColor)]}
         placeholder="Nombre del sensor"
-        placeholderTextColor={subtext}
+        placeholderTextColor={subtextColor}
         value={sensor.sensorUsername}
         onChangeText={(value) => handleChange("sensorUsername", value)}
       />
       <TextInput
-        style={[styles.textbox, { borderColor: accent, color: text }]}
+        style={[styles.textbox, inputStyle(accentColor, textColor)]}
         placeholder="Descripción del sensor"
-        placeholderTextColor={subtext}
+        placeholderTextColor={subtextColor}
         value={sensor.sensorDescription}
         onChangeText={(value) => handleChange("sensorDescription", value)}
         multiline
@@ -92,36 +85,39 @@ export default function SensorForm() {
       />
 
       <View style={styles.buttonsRow}>
-        {/* Cancelar a la izquierda */}
         <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: "#e63946", marginRight: 8 },
-          ]}
+          style={[styles.button, styles.cancelButton]}
           onPress={() =>
             Alert.alert("Aviso", "Mantén presionado para cancelar")
           }
           onLongPress={() => router.back()}
         >
-          <Text style={[styles.buttonText, { fontFamily: Fonts.sans }]}>
-            Cancelar
-          </Text>
+          <Text style={styles.buttonText}>Cancelar</Text>
         </TouchableOpacity>
 
-        {/* Guardar a la derecha */}
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: accent, marginLeft: 8 }]}
+          style={[styles.button, accentButtonStyle(accentColor)]}
           onPress={() => Alert.alert("Aviso", "Mantén presionado para guardar")}
           onLongPress={handleSave}
         >
-          <Text style={[styles.buttonText, { fontFamily: Fonts.sans }]}>
-            Guardar
-          </Text>
+          <Text style={styles.buttonText}>Guardar</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
+
+const backgroundStyle = (bg: string) => ({ backgroundColor: bg });
+const textStyle = (color: string) => ({ color });
+const inputStyle = (borderColor: string, textColor: string) => ({
+  borderColor,
+  color: textColor,
+});
+
+const accentButtonStyle = (bgColor: string) => ({
+  backgroundColor: bgColor,
+  marginLeft: 8,
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -133,6 +129,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "700",
     marginBottom: 12,
+    fontFamily: Fonts.sans,
   },
   tipsRow: {
     flexDirection: "row",
@@ -143,6 +140,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 6,
     flex: 1,
+    fontFamily: Fonts.rounded,
   },
   input: {
     borderWidth: 1,
@@ -151,6 +149,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginBottom: 16,
     fontSize: 16,
+    fontFamily: Fonts.sans,
   },
   textbox: {
     borderWidth: 1,
@@ -160,6 +159,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     fontSize: 16,
     textAlignVertical: "top",
+    fontFamily: Fonts.sans,
   },
   buttonsRow: {
     flexDirection: "row",
@@ -171,9 +171,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
   },
+  cancelButton: {
+    backgroundColor: "#e63946",
+    marginRight: 8,
+  },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "700",
+    fontFamily: Fonts.sans,
   },
 });

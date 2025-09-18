@@ -11,14 +11,15 @@ export const actionLogin = async (
   data: LoginData,
 ): Promise<AuthResponse | null> => {
   try {
-    const r = await API.put<AuthResponse>("/user", data);
+    const response = await API.put<AuthResponse>("/user", data);
 
-    if (r.status !== 200) {
+    if (response.status !== 200) {
       throw new Error("Respuesta no válida");
     }
 
-    return r.data;
+    return response.data;
   } catch {
+    // console.error("Error en actionLogin:", error);
     return null;
   }
 };
@@ -27,28 +28,30 @@ export const actionRegister = async (
   data: RegisterData,
 ): Promise<AuthResponse | null> => {
   try {
-    const r = await API.post<AuthResponse>("/user", data);
+    const response = await API.post<AuthResponse>("/user", data);
 
-    if (r.status !== 200) {
+    if (response.status !== 200) {
       throw new Error("Respuesta no válida");
     }
 
-    return r.data;
+    return response.data;
   } catch {
+    // console.error("Error en actionRegister:", error);
     return null;
   }
 };
 
 export const actionInformacion = async (): Promise<UserInformation | null> => {
   try {
-    const r = await API.get<UserInformation>("/user");
+    const response = await API.get<UserInformation>("/user");
 
-    if (r.status !== 200) {
+    if (response.status !== 200) {
       throw new Error("Respuesta no válida");
     }
 
-    return r.data;
+    return response.data;
   } catch {
+    // console.error("Error en actionInformacion:", error);
     return null;
   }
 };

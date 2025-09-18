@@ -2,16 +2,22 @@ import { SensorResponse } from "@/interfaces/sensor.interfaces";
 
 import { API } from "./API";
 
-export const actionSensorList = async () => {
-  try {
-    const r = await API.get<SensorResponse[]>("/reports");
+interface SensorListResult {
+  datos: SensorResponse[];
+  code: number;
+}
 
-    if (r.status === 500) {
-      throw new Error("Respuesta no válida");
+export const actionSensorList = async (): Promise<SensorListResult | null> => {
+  try {
+    const response = await API.get<SensorResponse[]>("/reports");
+
+    if (response.status >= 500) {
+      throw new Error("Error del servidor al obtener los reportes");
     }
 
-    return { datos: r.data, code: r.status };
+    return { datos: response.data, code: response.status };
   } catch {
+    // console.error("Error en actionSensorList:", error);
     return null;
   }
 };

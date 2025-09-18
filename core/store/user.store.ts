@@ -40,10 +40,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     await SecureStorageAdapter.deleteItem("token");
   },
 
-  loginUser: async (data: LoginData) => {
+  loginUser: async (data: LoginData): Promise<boolean> => {
     const response = await actionLogin(data);
-
-    if (!response) {
+    if (!response?.token) {
       await get().resetUser();
       return false;
     }
@@ -53,10 +52,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     return true;
   },
 
-  registerUser: async (data: RegisterData) => {
+  registerUser: async (data: RegisterData): Promise<boolean> => {
     const response = await actionRegister(data);
-
-    if (!response) {
+    if (!response?.token) {
       await get().resetUser();
       return false;
     }
@@ -66,7 +64,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     return true;
   },
 
-  checkUser: async () => {
+  checkUser: async (): Promise<void> => {
     set({ status: "checking" });
 
     const token = await SecureStorageAdapter.getItem("token");
@@ -76,7 +74,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     }
 
     const response = await actionInformacion();
-    if (!response) {
+    if (!response?.usuario) {
       await get().resetUser();
       return;
     }
