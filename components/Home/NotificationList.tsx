@@ -37,7 +37,6 @@ export default function NotificationList() {
     setRefreshing(false);
   }, [refetch]);
 
-  // Loading
   if (isLoading) {
     return (
       <View style={[styles.center, { backgroundColor }]}>
@@ -46,7 +45,6 @@ export default function NotificationList() {
     );
   }
 
-  // Empty state
   if (notificationArray.length === 0) {
     return (
       <View style={[styles.center, { backgroundColor }]}>
@@ -66,14 +64,14 @@ export default function NotificationList() {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      {notificationArray.map((sensor) => (
+      {notificationArray.map((notification) => (
         <SensorCardNotification
-          key={sensor.sensorID + sensor.fecha}
-          valor={Number(sensor.valor)}
-          fecha={sensor.fecha}
-          sensorName={sensor.sensorUsername}
-          sensorDescription={sensor.sensorDescripction}
-          sensorID={sensor.sensorID}
+          key={notification.sensorID + notification.fecha}
+          valor={Number(notification.valor)}
+          fecha={notification.fecha}
+          sensorName={notification.sensorUsername}
+          sensorDescription={notification.sensorDescripction}
+          sensorID={notification.sensorID}
         />
       ))}
     </ScrollView>

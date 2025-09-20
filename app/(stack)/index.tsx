@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, SafeAreaView } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useThemeColor } from "@/hooks/use-theme-color";
 import Header from "@/components/Home/Header";
@@ -17,7 +18,6 @@ export default function NotificationsScreen() {
 
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
-  const accentColor = useThemeColor({}, "accent");
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
@@ -30,8 +30,6 @@ export default function NotificationsScreen() {
       <ToggleButtons
         showNotifications={showNotifications}
         setShowNotifications={setShowNotifications}
-        textColor={textColor}
-        accentColor={accentColor}
       />
 
       {showNotifications ? <NotificationList /> : <SensorList />}

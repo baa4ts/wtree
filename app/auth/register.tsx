@@ -45,7 +45,7 @@ export default function RegisterScreen() {
     setLoading(false);
 
     if (success) {
-      router.replace("/"); // Redirige al home
+      router.replace("/");
     } else {
       Alert.alert("Error", "No se pudo registrar el usuario");
     }

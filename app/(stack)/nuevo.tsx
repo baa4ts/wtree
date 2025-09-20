@@ -12,6 +12,7 @@ import {
 
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Fonts } from "@/constants/theme";
+import { actionNewSensor } from "@/core/actions/sensores.actions";
 
 interface SensorData {
   sensorID: string;
@@ -33,20 +34,79 @@ export default function SensorForm() {
     sensorDescription: "",
   });
 
-  const handleSave = () => {
-    if (!sensor.sensorID.trim() || !sensor.sensorUsername.trim()) {
-      Alert.alert("Error", "El ID y el nombre son obligatorios");
-      return;
-    }
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (key: keyof SensorData, value: string) => {
     setSensor((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleSave = async () => {
+    if (!sensor.sensorID.trim() || !sensor.sensorUsername.trim()) {
+      Alert.alert("Error", "El ID y el nombre son obligatorios");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const success = await actionNewSensor({
+      sensorDescripction: sensor.sensorDescription,
+      sensorID: sensor.sensorID,
+      sensorUsername: sensor.sensorUsername,
+    });
+
+    setIsSubmitting(false);
+
+    if (success) {
+      router.dismiss();
+    } else {
+      Alert.alert(
+        "Error",
+        "No se pudo registrar el sensor. Intenta nuevamente. Con otros datos",
+      );
+      setSensor({ sensorID: "", sensorUsername: "", sensorDescription: "" });
+    }
+  };
+
   return (
-    <View style={[styles.container, backgroundStyle(backgroundColor)]}>
-      <Text style={[styles.title, textStyle(textColor)]}>Nuevo sensor</Text>
+    <View style={[styles.container, { backgroundColor }]}>
+      <Text style={[styles.title, { color: textColor }]}>Nuevo sensor</Text>
+
+      <View style={styles.tipsRow}>
+        <Text style={[styles.tipsText, { color: subtextColor }]}>
+          Importante: Al registrar un sensor, puede tardar en salir en la
+          aplicación, debido a que hasta que el sensor no notifique el servidor
+          no lo registrará
+        </Text>
+      </View>
+
+      <TextInput
+        style={styles.input}
+        placeholder="ID del sensor"
+        placeholderTextColor={subtextColor}
+        value={sensor.sensorID}
+        onChangeText={(value) => handleChange("sensorID", value)}
+        editable={!isSubmitting}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Nombre del sensor"
+        placeholderTextColor={subtextColor}
+        value={sensor.sensorUsername}
+        maxLength={20}
+        onChangeText={(value) => handleChange("sensorUsername", value)}
+        editable={!isSubmitting}
+      />
+      <TextInput
+        style={styles.textbox}
+        placeholder="Descripción del sensor"
+        placeholderTextColor={subtextColor}
+        value={sensor.sensorDescription}
+        onChangeText={(value) => handleChange("sensorDescription", value)}
+        multiline
+        maxLength={33}
+        numberOfLines={4}
+        editable={!isSubmitting}
+      />
 
       <View style={styles.tipsRow}>
         <Ionicons
@@ -54,51 +114,37 @@ export default function SensorForm() {
           size={18}
           color={subtextColor}
         />
-        <Text style={[styles.tipsText, textStyle(subtextColor)]}>
+        <Text style={[styles.tipsText, { color: subtextColor }]}>
           Tips: El sensor ID se obtiene en el momento que conectas tu sensor a
-          tu red Wifi
+          tu red WiFi
         </Text>
       </View>
 
-      <TextInput
-        style={[styles.input, inputStyle(accentColor, textColor)]}
-        placeholder="ID del sensor"
-        placeholderTextColor={subtextColor}
-        value={sensor.sensorID}
-        onChangeText={(value) => handleChange("sensorID", value)}
-      />
-      <TextInput
-        style={[styles.input, inputStyle(accentColor, textColor)]}
-        placeholder="Nombre del sensor"
-        placeholderTextColor={subtextColor}
-        value={sensor.sensorUsername}
-        onChangeText={(value) => handleChange("sensorUsername", value)}
-      />
-      <TextInput
-        style={[styles.textbox, inputStyle(accentColor, textColor)]}
-        placeholder="Descripción del sensor"
-        placeholderTextColor={subtextColor}
-        value={sensor.sensorDescription}
-        onChangeText={(value) => handleChange("sensorDescription", value)}
-        multiline
-        numberOfLines={4}
-      />
-
       <View style={styles.buttonsRow}>
         <TouchableOpacity
-          style={[styles.button, styles.cancelButton]}
+          style={[
+            styles.button,
+            styles.cancelButton,
+            isSubmitting && styles.disabledButton,
+          ]}
           onPress={() =>
             Alert.alert("Aviso", "Mantén presionado para cancelar")
           }
           onLongPress={() => router.back()}
+          disabled={isSubmitting}
         >
           <Text style={styles.buttonText}>Cancelar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, accentButtonStyle(accentColor)]}
-          onPress={() => Alert.alert("Aviso", "Mantén presionado para guardar")}
-          onLongPress={handleSave}
+          style={[
+            styles.button,
+            styles.saveButton,
+            { backgroundColor: accentColor },
+            isSubmitting && styles.disabledButton,
+          ]}
+          onPress={handleSave}
+          disabled={isSubmitting}
         >
           <Text style={styles.buttonText}>Guardar</Text>
         </TouchableOpacity>
@@ -106,18 +152,6 @@ export default function SensorForm() {
     </View>
   );
 }
-
-const backgroundStyle = (bg: string) => ({ backgroundColor: bg });
-const textStyle = (color: string) => ({ color });
-const inputStyle = (borderColor: string, textColor: string) => ({
-  borderColor,
-  color: textColor,
-});
-
-const accentButtonStyle = (bgColor: string) => ({
-  backgroundColor: bgColor,
-  marginLeft: 8,
-});
 
 const styles = StyleSheet.create({
   container: {
@@ -174,6 +208,12 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: "#e63946",
     marginRight: 8,
+  },
+  saveButton: {
+    marginLeft: 8,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
   buttonText: {
     color: "#fff",

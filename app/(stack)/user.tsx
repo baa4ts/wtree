@@ -44,7 +44,6 @@ export default function UserScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={28} color={textColor} />
@@ -53,7 +52,6 @@ export default function UserScreen() {
         <View style={styles.headerSpacer} />
       </View>
 
-      {/* Perfil Card */}
       <View style={[styles.profileCard, { backgroundColor: cardColor }]}>
         <Image
           source={{
@@ -69,7 +67,6 @@ export default function UserScreen() {
         </Text>
       </View>
 
-      {/* Botón Logout */}
       <TouchableOpacity
         onLongPress={handleLogout}
         style={[styles.logoutButton, { backgroundColor: accentColor }]}

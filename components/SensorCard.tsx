@@ -4,6 +4,9 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { getIconName } from "@/auxiliar/getIconName";
+import { formatDate } from "@/auxiliar/time";
+import { getColorNoDinamic } from "@/auxiliar/getColors2";
 
 export interface SensorCardProps {
   valor: number;
@@ -27,29 +30,12 @@ export default function SensorCardNotification({
   const fireColor = useThemeColor({}, "fire");
   const sheetColor = useThemeColor({}, "sheet");
 
-  const getIconName = (v: number) => {
-    if (v <= 400) return "water-outline";
-    if (v <= 649) return "leaf-outline";
-    return "flame-outline";
-  };
-
-  const getColor = (v: number) => {
-    if (v <= 400) return sheetColor;
-    if (v <= 649) return accentColor;
-    return fireColor;
-  };
-
-  const formatDate = (f: string) => {
-    const d = new Date(f);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    const hours = String(d.getHours()).padStart(2, "0");
-    const minutes = String(d.getMinutes()).padStart(2, "0");
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
-  };
-
-  const dynamicColor = getColor(valor);
+  const dynamicColor = getColorNoDinamic(
+    valor,
+    accentColor,
+    fireColor,
+    sheetColor,
+  );
 
   const dynamicStyles = StyleSheet.create({
     card: { backgroundColor: cardColor },

@@ -3,20 +3,21 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { Fonts } from "@/constants/theme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 interface ToggleButtonsProps {
   showNotifications: boolean;
   setShowNotifications: (val: boolean) => void;
-  textColor: string;
-  accentColor: string;
 }
 
 export default function ToggleButtons({
   showNotifications,
   setShowNotifications,
-  textColor,
-  accentColor,
 }: ToggleButtonsProps) {
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const accentColor = useThemeColor({}, "accent");
+
   const notificationButtonStyle = showNotifications
     ? [styles.toggleButton, { backgroundColor: accentColor }]
     : styles.toggleButton;
@@ -35,7 +36,7 @@ export default function ToggleButtons({
   const sensorIconColor = !showNotifications ? "#fff" : textColor;
 
   return (
-    <View style={styles.toggleRow}>
+    <View style={[styles.toggleRow, { backgroundColor }]}>
       <Pressable
         style={notificationButtonStyle}
         onPress={() => setShowNotifications(true)}
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 20,
     marginBottom: 12,
+    borderRadius: 12,
   },
   toggleButton: {
     flexDirection: "row",
@@ -77,7 +79,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: Fonts.sans,
     fontWeight: "600",
-    color: "#000", // color por defecto
   },
   toggleTextWhite: {
     fontSize: 16,

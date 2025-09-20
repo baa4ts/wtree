@@ -6,7 +6,9 @@ import {
   ActivityIndicator,
   View,
   Text,
+  Pressable,
 } from "react-native";
+import { router } from "expo-router";
 
 import { useSensorList } from "@/core/hook/sensor.tanStack";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -30,7 +32,6 @@ export default function SensorList() {
     setRefreshing(false);
   }, [refetch]);
 
-  // Loading
   if (isLoading) {
     return (
       <View style={[styles.center, { backgroundColor }]}>
@@ -39,13 +40,18 @@ export default function SensorList() {
     );
   }
 
-  // Empty state
   if (sensorArray.length === 0) {
     return (
       <View style={[styles.center, { backgroundColor }]}>
-        <Text style={{ color: subtextColor, fontFamily: Fonts.sans }}>
+        <Text style={[styles.emptyText, { color: subtextColor }]}>
           No hay sensores aún
         </Text>
+        <Pressable
+          onPress={() => router.push("/(stack)/nuevo")}
+          style={[styles.addButton, { backgroundColor: accentColor }]}
+        >
+          <Text style={styles.addButtonText}>Agregar un sensor</Text>
+        </Pressable>
       </View>
     );
   }
@@ -78,5 +84,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 24,
+  },
+  emptyText: {
+    fontFamily: Fonts.sans,
+    fontSize: 16,
+    marginBottom: 25,
+  },
+  addButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  addButtonText: {
+    fontSize: 16,
+    fontFamily: Fonts.sans,
+    fontWeight: "600",
+    color: "#fff",
   },
 });
