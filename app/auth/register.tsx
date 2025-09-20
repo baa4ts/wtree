@@ -14,6 +14,7 @@ import { Fonts } from "@/constants/theme";
 import { useUserStore } from "@/core/store/user.store";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { RegisterData } from "@/interfaces/user.interface";
+import { getExpoPushToken } from "@/expo/usePushToken";
 
 export default function RegisterScreen() {
   const background = useThemeColor({}, "background");
@@ -27,6 +28,7 @@ export default function RegisterScreen() {
     username: "",
     password: "",
     gmail: "",
+    token: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -40,14 +42,22 @@ export default function RegisterScreen() {
       return;
     }
 
-    setLoading(true);
-    const success = await registerUser(registerData);
-    setLoading(false);
+    try {
+      const token = await getExpoPushToken();
+      setRegisterData((prev) => ({ ...prev, token }));
 
-    if (success) {
-      router.replace("/");
-    } else {
-      Alert.alert("Error", "No se pudo registrar el usuario");
+      setLoading(true);
+      const success = await registerUser(registerData);
+      setLoading(false);
+
+      if (success) {
+        router.replace("/");
+      } else {
+        Alert.alert("Error", "No se pudo registrar el usuario");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "No se pudo obtener el token de notificación");
     }
   };
 

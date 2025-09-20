@@ -14,6 +14,7 @@ import { Fonts } from "@/constants/theme";
 import { useUserStore } from "@/core/store/user.store";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { LoginData } from "@/interfaces/user.interface";
+import { getExpoPushToken } from "@/expo/usePushToken";
 
 export default function LoginScreen() {
   const background = useThemeColor({}, "background");
@@ -26,22 +27,31 @@ export default function LoginScreen() {
   const [loginData, setLoginData] = useState<LoginData>({
     username: "",
     password: "",
+    token: "",
   });
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!loginData.username || !loginData.password) return;
 
-    setLoading(true);
-    const success = await loginUser(loginData);
-    setLoading(false);
+    try {
+      const token = await getExpoPushToken();
+      setLoginData((prev) => ({ ...prev, token }));
 
-    if (success) {
-      router.replace("/");
-      return;
+      setLoading(true);
+      const success = await loginUser(loginData);
+      setLoading(false);
+
+      if (success) {
+        router.replace("/");
+        return;
+      }
+
+      Alert.alert("Error", "Usuario o contraseña no son correctos");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "No se pudo obtener el token de notificación");
     }
-
-    Alert.alert("Error", "Usuario o contraseña no son correctos");
   };
 
   return (
