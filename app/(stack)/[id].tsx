@@ -1,5 +1,11 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { useEffect } from "react";
 
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -25,15 +31,16 @@ export default function Sensor() {
 
   if (!data) {
     return (
-      <View style={[styles.center, { backgroundColor }]}>
-        <Text style={[styles.text, { color: textColor }]}>
+      <View style={[styles.loadingContainer, { backgroundColor }]}>
+        <ActivityIndicator size="large" color={accentColor} />
+        <Text style={[styles.loadingText, { color: textColor }]}>
           Cargando sensor...
         </Text>
       </View>
     );
   }
 
-  const lastReport = data.reportes?.at(-1);
+  const lastReport = data.reportes[0];
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -98,6 +105,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     marginTop: 40,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    fontFamily: Fonts.sans,
   },
   center: {
     justifyContent: "center",

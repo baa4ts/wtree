@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -14,7 +14,7 @@ import { Fonts } from "@/constants/theme";
 import { useUserStore } from "@/core/store/user.store";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { RegisterData } from "@/interfaces/user.interface";
-import { getExpoPushToken } from "@/expo/usePushToken";
+import { registerForPushNotificationsAsync } from "@/expo/usePushToken";
 
 export default function RegisterScreen() {
   const background = useThemeColor({}, "background");
@@ -28,7 +28,7 @@ export default function RegisterScreen() {
     username: "",
     password: "",
     gmail: "",
-    token: "",
+    tokenExpo: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -43,11 +43,12 @@ export default function RegisterScreen() {
     }
 
     try {
-      const token = await getExpoPushToken();
-      setRegisterData((prev) => ({ ...prev, token }));
+      const tokenExpo = (await registerForPushNotificationsAsync()) || "NONE";
+
+      const finalRegisterData = { ...registerData, tokenExpo };
 
       setLoading(true);
-      const success = await registerUser(registerData);
+      const success = await registerUser(finalRegisterData);
       setLoading(false);
 
       if (success) {
@@ -58,6 +59,7 @@ export default function RegisterScreen() {
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "No se pudo obtener el token de notificación");
+      setLoading(false);
     }
   };
 
@@ -132,6 +134,17 @@ export default function RegisterScreen() {
           style={[styles.linkText, { color: accent, fontFamily: Fonts.sans }]}
         >
           ¿Ya tienes cuenta? Inicia sesión aquí
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => router.replace("/debbug")}
+        disabled={loading}
+      >
+        <Text
+          style={[styles.linkText, { color: accent, fontFamily: Fonts.sans }]}
+        >
+          Entrar al debbug
         </Text>
       </TouchableOpacity>
     </SafeAreaView>

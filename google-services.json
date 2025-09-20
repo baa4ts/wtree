@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "365214362970",
+    "project_id": "wtree-3ca73",
+    "storage_bucket": "wtree-3ca73.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365214362970:android:269ff275f6b88a2e921763",
+        "android_client_info": {
+          "package_name": "com.baa4ts.wtree"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHeNZQkDI3Haozmw8mTHqcp0zteY6qKBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,37 +6,20 @@ import {
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import * as Notifications from "expo-notifications";
-
+import { useEffect } from "react";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { registerForPushNotificationsAsync } from "@/expo/usePushToken";
+import useNotificationObserver from "@/expo/useNotificationObserver";
 
 const queryClient = new QueryClient();
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
-
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [lastNotification, setLastNotification] =
-    useState<Notifications.Notification | null>(null);
+
+  useNotificationObserver();
 
   useEffect(() => {
-    const subscription = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        setLastNotification(notification);
-        console.log("Notificación recibida:", notification);
-      },
-    );
-
-    return () => subscription.remove();
+    registerForPushNotificationsAsync();
   }, []);
 
   return (

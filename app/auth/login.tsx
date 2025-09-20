@@ -14,7 +14,7 @@ import { Fonts } from "@/constants/theme";
 import { useUserStore } from "@/core/store/user.store";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { LoginData } from "@/interfaces/user.interface";
-import { getExpoPushToken } from "@/expo/usePushToken";
+import { registerForPushNotificationsAsync } from "@/expo/usePushToken";
 
 export default function LoginScreen() {
   const background = useThemeColor({}, "background");
@@ -27,30 +27,34 @@ export default function LoginScreen() {
   const [loginData, setLoginData] = useState<LoginData>({
     username: "",
     password: "",
-    token: "",
+    tokenExpo: "",
   });
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!loginData.username || !loginData.password) return;
+    if (!loginData.username || !loginData.password) {
+      Alert.alert("Error", "Todos los campos son obligatorios");
+      return;
+    }
 
     try {
-      const token = await getExpoPushToken();
-      setLoginData((prev) => ({ ...prev, token }));
+      const tokenExpo = (await registerForPushNotificationsAsync()) || "NONE";
+
+      const finalLoginData = { ...loginData, tokenExpo };
 
       setLoading(true);
-      const success = await loginUser(loginData);
+      const success = await loginUser(finalLoginData);
       setLoading(false);
 
       if (success) {
         router.replace("/");
-        return;
+      } else {
+        Alert.alert("Error", "Usuario o contraseña no son correctos");
       }
-
-      Alert.alert("Error", "Usuario o contraseña no son correctos");
     } catch (error) {
       console.error(error);
       Alert.alert("Error", "No se pudo obtener el token de notificación");
+      setLoading(false);
     }
   };
 
@@ -113,21 +117,24 @@ export default function LoginScreen() {
           ¿No tienes cuenta? Regístrate aquí
         </Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => router.replace("/debbug")}
+        disabled={loading}
+      >
+        <Text
+          style={[styles.linkText, { color: accent, fontFamily: Fonts.sans }]}
+        >
+          Entrar al debbug
+        </Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    marginBottom: 24,
-  },
+  container: { flex: 1, padding: 24, justifyContent: "center" },
+  title: { fontSize: 28, fontWeight: "700", marginBottom: 24 },
   input: {
     borderWidth: 1,
     borderRadius: 12,
@@ -143,14 +150,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  linkText: {
-    fontSize: 14,
-    marginTop: 16,
-    textAlign: "center",
-  },
+  buttonText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  linkText: { fontSize: 14, marginTop: 16, textAlign: "center" },
 });

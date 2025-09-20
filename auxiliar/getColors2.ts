@@ -5,6 +5,6 @@ export const getColorNoDinamic = (
   sheetColor: string,
 ) => {
   if (v <= 400) return sheetColor;
-  if (v <= 649) return accentColor;
+  if (v <= 750) return accentColor;
   return fireColor;
 };
